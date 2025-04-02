@@ -14,40 +14,22 @@ public class Main {
         AviatorEvaluator.addFunction(new com.googlecode.aviator.runtime.function.math.MathAbsFunction());
         AviatorEvaluator.addFunction(new MathMaxFunction());
 
-        String patternFile = null;
-        int ox = 0, oy = 0, oz = 0;
-        int cx = 0, cy = 0, cz = 0;
-        int r = 5, radius = 10;
-        int offset = -1;
-        String facing = null;
+        GeneratorParams params = ConfigLoader.load("config.yml");
 
-        for (String arg : args) {
-            if (arg.startsWith("--pattern=")) patternFile = arg.substring("--pattern=".length());
-            else if (arg.startsWith("--ox=")) ox = Integer.parseInt(arg.substring("--ox=".length()));
-            else if (arg.startsWith("--oy=")) oy = Integer.parseInt(arg.substring("--oy=".length()));
-            else if (arg.startsWith("--oz=")) oz = Integer.parseInt(arg.substring("--oz=".length()));
-            else if (arg.startsWith("--r="))   r = Integer.parseInt(arg.substring("--r=".length()));
-            else if (arg.startsWith("--radius=")) radius = Integer.parseInt(arg.substring("--radius=".length()));
-            else if (arg.startsWith("--offset=")) offset = Integer.parseInt(arg.substring("--offset=".length()));
-            else if (arg.startsWith("--facing=")) facing = arg.substring("--facing=".length());
-        }
-
-        if (patternFile == null) {
-            System.err.println("Pattern file required via --pattern=...");
-            return;
-        }
-
-        try (InputStream in = new FileInputStream(patternFile)) {
+        try (InputStream in = new FileInputStream(params.patternName)) {
             PointGenerator generator = PointGenerator.loadFromYaml(in);
 
-            List<Location3D> kept = generator.generateInnerPointsFromObserver(ox, oy, oz, radius, facing, r, null);
+            List<Location3D> kept = generator.generateInnerPoints(params);
 
-            List<Location3D> all =  generator.generateOuterPointsFromObserver(ox, oy, oz, radius, facing, null);
+            List<Location3D> all =  generator.generateOuterPoints(params);
 
             List<Location3D> removed = new ArrayList<>(all);
             removed.removeAll(kept);
 
-            HtmlPlotExporter.export(all, removed, kept);
+            Location3D observer = new Location3D(params.x, params.y, params.z);
+            Location3D center = new Location3D(params.x + params.offsetX, params.y + params.offsetY, params.z + params.offsetZ);
+            
+            HtmlPlotExporter.export(params.patternName, all, removed, kept, observer, center);
         }
     }
 

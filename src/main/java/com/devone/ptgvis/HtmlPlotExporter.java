@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 
 public class HtmlPlotExporter {
 
-    public static void export(List<Location3D> allPoints, List<Location3D> removedPoints, List<Location3D> keptPoints) throws IOException {
+    public static void export(String ptrnName, List<Location3D> allPoints, List<Location3D> removedPoints, List<Location3D> keptPoints,
+                              Location3D observer, Location3D center) throws IOException {
+
         String html = """
                 <!DOCTYPE html>
                 <html>
@@ -23,15 +25,9 @@ public class HtmlPlotExporter {
                     <script>
                         function toTrace(points, color, name, opacity) {
                             return {
-                                // Оставляем X как есть:
                                 x: points.map(p => p[0]),
-
-                                // Вместо Minecraft Z выводим на ось Y Plotly:
                                 y: points.map(p => p[2]),
-
-                                // Вместо Minecraft Y выводим на ось Z Plotly:
                                 z: points.map(p => p[1]),
-
                                 mode: 'markers',
                                 type: 'scatter3d',
                                 marker: {
@@ -47,21 +43,48 @@ public class HtmlPlotExporter {
                         const removedPoints = %s;
                         const keptPoints = %s;
 
+                        const observerTrace = {
+                            x: [%d],
+                            y: [%d],
+                            z: [%d],
+                            mode: 'markers',
+                            type: 'scatter3d',
+                            marker: {
+                                size: 6,
+                                color: 'red'
+                            },
+                            name: 'Observer'
+                        };
+
+                        const centerTrace = {
+                            x: [%d],
+                            y: [%d],
+                            z: [%d],
+                            mode: 'markers',
+                            type: 'scatter3d',
+                            marker: {
+                                size: 6,
+                                color: 'blue'
+                            },
+                            name: 'Center'
+                        };
+
                         const data = [
                             toTrace(allPoints, 'lightgray', 'All (volume)', 0.05),
                             toTrace(removedPoints, 'gray', 'Removed', 0.2),
-                            toTrace(keptPoints, 'green', 'Kept (Shape)', 1.0)
+                            toTrace(keptPoints, 'green', 'Kept (Shape)', 1.0),
+                            observerTrace,
+                            centerTrace
                         ];
 
                         Plotly.newPlot('plot', data, {
                             scene: {
                                 xaxis: { title: 'X (mc-x)' },
-                                yaxis: { title: 'Z (mc-y)' }, // здесь теперь Z (MC) идёт по оси Y
-                                zaxis: { title: 'Y (mc=z)' }  // а Y (MC) идёт по оси Z
+                                yaxis: { title: 'Z (mc-z)' },
+                                zaxis: { title: 'Y (mc-y)' }
                             },
                             margin: { l: 0, r: 0, b: 0, t: 0 }
                         });
-                        
                     </script>
                 </body>
                 </html>
@@ -71,14 +94,18 @@ public class HtmlPlotExporter {
         String removed = toJSArray(removedPoints);
         String kept = toJSArray(keptPoints);
 
-        String result = String.format(html, all, removed, kept);
+        String result = String.format(html,
+                all, removed, kept,
+                observer.x, observer.z, observer.y,  // red marker
+                center.x, center.z, center.y         // blue marker
+        );
 
-        Path output = Path.of("pattern_visualization.html");
+        Path output = Path.of(ptrnName+"_vis.html");
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(output))) {
             writer.print(result);
         }
 
-        System.out.println("Visualization saved to pattern_visualization.html");
+        System.out.println("Visualization saved to: " + ptrnName+"_vis.html");
     }
 
     private static String toJSArray(List<Location3D> points) {

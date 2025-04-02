@@ -30,54 +30,48 @@ public class PointGenerator {
         return new PointGenerator(filters, sort);
     }
 
-    public List<Location3D> generateInnerPointsFromObserver(
-            int ox, int oy, int oz,
-            int radius, String facing,  int inner_radius, Integer offset
-    ) {
-        int[] center;
-        if (facing != null && (offset == null || offset != 0)) {
-            int actualOffset = (offset != null) ? offset : radius;
-            center = computeFigureCenterFromObserver(ox, oy, oz, actualOffset, facing);
-        } else {
-            center = new int[]{ox, oy, oz};
-        }
-        return generateInnerPoints(center[0], center[1], center[2], radius, inner_radius);
+    public List<Location3D> generateInnerPoints(GeneratorParams params) {
+        int ox = params.x;
+        int oy = params.y;
+        int oz = params.z;
+        
+        int innerRadius = params.innerRadius;
+        
+        int offsetX = params.offsetX;
+        int offsetY = params.offsetY;
+        int offsetZ = params.offsetZ;
+
+        String direction = params.breakDirection;
+
+        int[] center = computeFigureCenter(ox, oy, oz, offsetX, offsetY, offsetZ, direction);
+
+        return generateInnerPoints(center[0], center[1], center[2], innerRadius);
     }
 
-    private int[] computeFigureCenterFromObserver(int ox, int oy, int oz, int offset, String facing) {
-        int dx = 0, dy = 0, dz = 0;
+    private int[] computeFigureCenter(int ox, int oy, int oz, int offsetX, int offsetY, int offsetZ, String direction) {
 
-        switch (facing.toUpperCase()) {
-            case "UP": dy = 1; break;
-            case "DOWN": dy = -1; break;
-            case "NORTH": dz = -1; break;
-            case "SOUTH": dz = 1; break;
-            case "WEST": dx = -1; break;
-            case "EAST": dx = 1; break;
-            default: throw new IllegalArgumentException("Unknown facing: " + facing);
-        }
-
-        int cx = ox + dx * offset;
-        int cy = oy + dy * offset;
-        int cz = oz + dz * offset;
+        int cx = ox + offsetX;
+        int cy = oy + offsetY;
+        int cz = oz + offsetZ;
 
         return new int[]{cx, cy, cz};
     }
 
-    private List<Location3D> generateInnerPoints(int cx, int cy, int cz, int radius, int r) {
+    
+    private List<Location3D> generateInnerPoints(int cx, int cy, int cz, int inner_radius) {
         List<Location3D> result = new ArrayList<>();
         Map<String, Object> env = new HashMap<>();
 
-        for (int y = cy - radius; y <= cy + radius; y++) {
-            for (int x = cx - radius; x <= cx + radius; x++) {
-                for (int z = cz - radius; z <= cz + radius; z++) {
+        for (int y = cy - inner_radius; y <= cy + inner_radius; y++) {
+            for (int x = cx - inner_radius; x <= cx + inner_radius; x++) {
+                for (int z = cz - inner_radius; z <= cz + inner_radius; z++) {
                     env.put("x", x);
                     env.put("y", y);
                     env.put("z", z);
                     env.put("cx", cx);
                     env.put("cy", cy);
                     env.put("cz", cz);
-                    env.put("r", r);
+                    env.put("r", inner_radius);
 
                     if (applyFilters(env)) {
                         result.add(new Location3D(x, y, z));
@@ -96,22 +90,26 @@ public class PointGenerator {
         return result;
     }
 
-    public List<Location3D> generateOuterPointsFromObserver(
-        int ox, int oy, int oz,
-        int radius, String facing, Integer offset
-        ) {
-            int[] center;
-            if (facing != null && (offset == null || offset != 0)) {
-                int actualOffset = (offset != null) ? offset : radius;
-                center = computeFigureCenterFromObserver(ox, oy, oz, actualOffset, facing);
-            } else {
-                center = new int[]{ox, oy, oz};
-            }
-            return generateFullCube(center[0], center[1], center[2], radius);
-        }
+    public List<Location3D> generateOuterPoints(GeneratorParams params) {
+        int ox = params.x;
+        int oy = params.y;
+        int oz = params.z;
+        
 
+        int outerRadius = params.outerRadius;
+        
+        int offsetX = params.offsetX;
+        int offsetY = params.offsetY;
+        int offsetZ = params.offsetZ;
 
-    private List<Location3D> generateFullCube(int cx, int cy, int cz, int radius) {
+        String direction = params.breakDirection;
+
+        int[] center = computeFigureCenter(ox, oy, oz, offsetX, offsetY, offsetZ, direction);
+
+        return generateOuterPoints(center[0], center[1], center[2], outerRadius);
+    }
+
+    private List<Location3D> generateOuterPoints(int cx, int cy, int cz, int radius) {
         List<Location3D> result = new ArrayList<>();
         for (int y = cy - radius; y <= cy + radius; y++) {
             for (int x = cx - radius; x <= cx + radius; x++) {
@@ -126,6 +124,7 @@ public class PointGenerator {
 
 
     private boolean applyFilters(Map<String, Object> env) {
+
         for (Expression expr : filterExpressions) {
             Object result = expr.execute(env);
             if (!(result instanceof Boolean) || !(Boolean) result) {
