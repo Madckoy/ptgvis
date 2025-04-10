@@ -1,4 +1,4 @@
-package com.devone.ptgvis;
+package com.devone.bot.patterns;
 
 import java.util.List;
 

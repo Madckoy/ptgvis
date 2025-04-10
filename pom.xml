@@ -35,7 +35,7 @@
             <configuration>
                 <archive>
                 <manifest>
-                    <mainClass>com.devone.ptgvis.Main</mainClass>
+                    <mainClass>com.devone.bot.Main</mainClass>
                 </manifest>
                 </archive>
                 <descriptorRefs>

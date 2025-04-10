@@ -1,6 +1,9 @@
-package com.devone.ptgvis;
+package com.devone.bot.utils;
 
 import org.yaml.snakeyaml.Yaml;
+
+import com.devone.bot.patterns.generator.GeneratorParams;
+
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;

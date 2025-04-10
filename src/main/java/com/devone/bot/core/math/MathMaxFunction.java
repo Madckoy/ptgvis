@@ -1,4 +1,4 @@
-package com.devone.ptgvis;
+package com.devone.bot.core.math;
 
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;
