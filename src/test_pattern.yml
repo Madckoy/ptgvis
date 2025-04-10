@@ -1,6 +1,8 @@
-# Combined pattern: remove everything above + everything around pyramid
+#cone
 filters:
-  - "y >= cy - r && y <= cy + r"                  # весь вертикальный диапазон
-  - "math.abs(x - cx) > (cy - y) || y > cy"       # всё вне пирамиды ИЛИ выше её вершины
+  - "x >= cx - r && x <= cx + r"
+  - "y >= cy && y <= cy + r"
+  - "z >= cz - r && z <= cz + r"
+  - "math.max(math.abs(x - cx), math.abs(z - cz)) <= (y - cy)"
 sort:
   - "y"
