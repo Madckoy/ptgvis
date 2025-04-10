@@ -1,0 +1,7 @@
+filters:
+  - "x >= cx - r && x <= cx + r"
+  - "y >= cy - r && y <= cy + r"
+  - "z >= cz - r && z <= cz + r"
+  - "!(y == cy + r && (x == cx || z == cz))"
+sort:
+  - "y"

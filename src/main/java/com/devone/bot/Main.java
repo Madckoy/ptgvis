@@ -36,7 +36,7 @@ public class Main {
 
             BotCoordinate3D figureCenter = new BotCoordinate3D(params.x + params.offsetX, params.y + params.offsetY, params.z + params.offsetZ);
             
-            HtmlPlotExporter.export(params.patternName, outerPts, removedPts, innerPts, observerPos, figureCenter);
+            HtmlPlotExporter.export(params.patternName, outerPts, innerPts, removedPts, observerPos, figureCenter);
         }
     }
 

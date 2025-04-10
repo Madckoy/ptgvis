@@ -7,17 +7,17 @@ import java.util.List;
 
 public class HtmlPlotExporter {
 
-    public static void export(String ptrnName, List<BotCoordinate3D> innerPts, List<BotCoordinate3D> outerPts, 
-                            List<BotCoordinate3D> removedPts, BotCoordinate3D observerPos, BotCoordinate3D figureCenter) throws IOException {
+    public static void export(String ptrnName, List<BotCoordinate3D> outerPts, List<BotCoordinate3D> innerPts, 
+                            List<BotCoordinate3D> substractedPts, BotCoordinate3D observerPos, BotCoordinate3D figureCenter) throws IOException {
 
         StringBuilder html = new StringBuilder();
         html.append("<html><head><script src='https://cdn.plot.ly/plotly-latest.min.js'></script></head><body>");
         html.append("<div id='plot' style='width:100%;height:100vh;'></div><script>\n");
 
         // Преобразуем точки в блоки (для каждой группы: innerPts, outerPts, removedPts)
-        addMesh3dSection(html, outerPts, "outerPattern", "#CCCCCC",0.5); // Цвет для внешнего паттерна (например, gray)
-        addMesh3dSection(html, innerPts, "innerPattern", "#90EE90", 0.5);
-        addMesh3dSection(html, removedPts, "removedPattern", "#FF4500", 0.5); // Цвет для удаленных точек (например, оранжевый)
+        addMesh3dSection(html, outerPts, "outerBlocks", "#000000",0.25); // Цвет для внешних блоков (например, gray)
+        addMesh3dSection(html, innerPts, "innerBlocks", "#90EE90", 0.7);
+        addMesh3dSection(html, substractedPts, "substract", "#DDDDDD", 0.5); // Цвет для удаленных точек
 
         // Добавление наблюдателя и центра как блоков с красным и синим цветами через addMesh3dSection
         List<BotCoordinate3D> observerList = new ArrayList<>();
@@ -29,7 +29,7 @@ public class HtmlPlotExporter {
         addMesh3dSection(html, centerList, "figureCenter", "blue", 0.5); // Центр синий
 
         // Визуализация 3D
-        html.append("Plotly.newPlot('plot', [innerPattern, outerPattern, removedPattern, observer, figureCenter], {")
+        html.append("Plotly.newPlot('plot', [outerBlocks, innerBlocks, substract, observer, figureCenter], {")
         .append("margin:{l:0,r:0,b:0,t:30},")
         .append("scene:{")
         .append("    xaxis:{title:'X'},")  // Ось X будет горизонтальной
