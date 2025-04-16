@@ -1,6 +1,6 @@
 package com.devone.bot.patterns.generator;
 
-import com.devone.bot.utils.BotCoordinate3D;
+import com.devone.bot.utils.blocks.BotLocation;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import org.yaml.snakeyaml.Yaml;
@@ -31,7 +31,7 @@ public class PointGenerator {
         return new PointGenerator(filters, sort);
     }
 
-    public List<BotCoordinate3D> generateInnerPoints(GeneratorParams params) {
+    public List<BotLocation> generateInnerPoints(GeneratorParams params) {
         int ox = params.x;
         int oy = params.y;
         int oz = params.z;
@@ -59,8 +59,8 @@ public class PointGenerator {
     }
 
     
-    private List<BotCoordinate3D> generateInnerPoints(int cx, int cy, int cz, int inner_radius) {
-        List<BotCoordinate3D> result = new ArrayList<>();
+    private List<BotLocation> generateInnerPoints(int cx, int cy, int cz, int inner_radius) {
+        List<BotLocation> result = new ArrayList<>();
         Map<String, Object> env = new HashMap<>();
 
         for (int y = cy - inner_radius; y <= cy + inner_radius; y++) {
@@ -75,23 +75,23 @@ public class PointGenerator {
                     env.put("r", inner_radius);
 
                     if (applyFilters(env)) {
-                        result.add(new BotCoordinate3D(x, y, z));
+                        result.add(new BotLocation(x, y, z));
                     }
                 }
             }
         }
 
         result.sort(Comparator.comparingDouble(loc -> {
-            env.put("x", loc.x);
-            env.put("y", loc.y);
-            env.put("z", loc.z);
+            env.put("x", loc.getX());
+            env.put("y", loc.getY());
+            env.put("z", loc.getZ());
             return ((Number) sortExpression.execute(env)).doubleValue();
         }));
 
         return result;
     }
 
-    public List<BotCoordinate3D> generateOuterPoints(GeneratorParams params) {
+    public List<BotLocation> generateOuterPoints(GeneratorParams params) {
         int ox = params.x;
         int oy = params.y;
         int oz = params.z;
@@ -110,12 +110,12 @@ public class PointGenerator {
         return generateOuterPoints(center[0], center[1], center[2], outerRadius);
     }
 
-    private List<BotCoordinate3D> generateOuterPoints(int cx, int cy, int cz, int radius) {
-        List<BotCoordinate3D> result = new ArrayList<>();
+    private List<BotLocation> generateOuterPoints(int cx, int cy, int cz, int radius) {
+        List<BotLocation> result = new ArrayList<>();
         for (int y = cy - radius; y <= cy + radius; y++) {
             for (int x = cx - radius; x <= cx + radius; x++) {
                 for (int z = cz - radius; z <= cz + radius; z++) {
-                    result.add(new BotCoordinate3D(x, y, z));
+                    result.add(new BotLocation(x, y, z));
                 }
             }
         }

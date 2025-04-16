@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.devone.bot.utils.blocks.BotLocation;
+
 public class HtmlPlotExporter {
 
-    public static void export(String ptrnName, List<BotCoordinate3D> outerPts, List<BotCoordinate3D> innerPts, 
-                            List<BotCoordinate3D> substractedPts, BotCoordinate3D observerPos, BotCoordinate3D figureCenter) throws IOException {
+    public static void export(String ptrnName, List<BotLocation> outerPts, List<BotLocation> innerPts, 
+                            List<BotLocation> substractedPts, BotLocation observerPos, BotLocation figureCenter) throws IOException {
 
         StringBuilder html = new StringBuilder();
         html.append("<html><head><script src='https://cdn.plot.ly/plotly-latest.min.js'></script></head><body>");
@@ -20,11 +22,11 @@ public class HtmlPlotExporter {
         addMesh3dSection(html, substractedPts, "substract", "#DDDDDD", 0.5); // Цвет для удаленных точек
 
         // Добавление наблюдателя и центра как блоков с красным и синим цветами через addMesh3dSection
-        List<BotCoordinate3D> observerList = new ArrayList<>();
+        List<BotLocation> observerList = new ArrayList<>();
         observerList.add(observerPos); // Добавляем точку для наблюдателя
         addMesh3dSection(html, observerList, "observer", "red", 0.5); // Наблюдатель красный
 
-        List<BotCoordinate3D> centerList = new ArrayList<>();
+        List<BotLocation> centerList = new ArrayList<>();
         centerList.add(figureCenter); // Добавляем точку для центра
         addMesh3dSection(html, centerList, "figureCenter", "blue", 0.5); // Центр синий
 
@@ -54,7 +56,7 @@ public class HtmlPlotExporter {
     }
 
     // Метод для добавления 3D-сетки
-    private static void addMesh3dSection(StringBuilder html, List<BotCoordinate3D> points, String varName, String colorHex, double opacity) {
+    private static void addMesh3dSection(StringBuilder html, List<BotLocation> points, String varName, String colorHex, double opacity) {
         if (points == null || points.isEmpty()) {
             System.err.println("Warning: No points to plot for " + varName);
             return;
@@ -70,11 +72,11 @@ public class HtmlPlotExporter {
         html.append("var text = ").append(varName).append(".text;\n");
     
         int vertexOffset = 0;
-        for (BotCoordinate3D point : points) {
+        for (BotLocation point : points) {
             // Добавление куба для каждой точки
-            double x0 = point.x - 0.5, x1 = point.x + 0.5;
-            double y0 = point.y - 0.5, y1 = point.y + 0.5;
-            double z0 = point.z - 0.5, z1 = point.z + 0.5;
+            double x0 = point.getX() - 0.5, x1 = point.getX() + 0.5;
+            double y0 = point.getY() - 0.5, y1 = point.getY() + 0.5;
+            double z0 = point.getZ() - 0.5, z1 = point.getZ() + 0.5;
     
             // Вершины куба
             html.append("x.push(").append(x0).append("); x.push(").append(x1).append("); x.push(").append(x1).append("); x.push(").append(x0).append(");");
@@ -105,7 +107,7 @@ public class HtmlPlotExporter {
             // Цвет и текст
             for (int f = 0; f < faces.length; f++) {
                 html.append("facecolor.push('").append(colorHex).append("');");
-                html.append("text.push('").append("X: ").append(point.x).append("<br>Y: ").append(point.y).append("<br>Z: ").append(point.z).append("');");
+                html.append("text.push('").append("X: ").append(point.getX()).append("<br>Y: ").append(point.getY()).append("<br>Z: ").append(point.getZ()).append("');");
             }
     
             vertexOffset += 8;

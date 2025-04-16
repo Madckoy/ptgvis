@@ -18,3 +18,12 @@ target/classes/patterns/cube.yml
 target/maven-archiver/pom.properties
 target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+target/classes/com/devone/bot/Main.class
+target/classes/com/devone/bot/core/math/MathMaxFunction.class
+target/classes/com/devone/bot/patterns/PatternConfig.class
+target/classes/com/devone/bot/patterns/generator/GeneratorParams.class
+target/classes/com/devone/bot/patterns/generator/PointGenerator.class
+target/classes/com/devone/bot/utils/BotLocation.class
+target/classes/com/devone/bot/utils/ConfigLoader.class
+target/classes/com/devone/bot/utils/HtmlPlotExporter.class
+target/classes/com/devone/bot/utils/blocks/BotLocation.class
