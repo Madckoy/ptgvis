@@ -1,0 +1,8 @@
+#stepped_dome
+filters:
+  - "x >= cx - r && x <= cx + r"
+  - "z >= cz - r && z <= cz + r"
+  - "y >= cy && y <= cy + r"
+  - "math.max(math.abs(x - cx), math.abs(z - cz)) <= r - (y - cy)"
+sort:
+  - "y"

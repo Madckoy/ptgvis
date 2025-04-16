@@ -1,0 +1,3 @@
+filters:
+  - "y == cy - (math.abs(x - cx) + math.abs(z - cz))"
+  - "math.abs(x - cx) + math.abs(z - cz) <= r"
