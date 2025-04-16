@@ -21,6 +21,8 @@ public class HtmlPlotExporter {
         addMesh3dSection(html, innerPts, "innerBlocks", "#90EE90", 0.7);
         addMesh3dSection(html, substractedPts, "substract", "#DDDDDD", 0.5); // Цвет для удаленных точек
 
+        addWireframeEdges(html, innerPts, "gray");
+
         // Добавление наблюдателя и центра как блоков с красным и синим цветами через addMesh3dSection
         List<BotLocation> observerList = new ArrayList<>();
         observerList.add(observerPos); // Добавляем точку для наблюдателя
@@ -31,7 +33,7 @@ public class HtmlPlotExporter {
         addMesh3dSection(html, centerList, "figureCenter", "blue", 0.5); // Центр синий
 
         // Визуализация 3D
-        html.append("Plotly.newPlot('plot', [outerBlocks, innerBlocks, substract, observer, figureCenter], {")
+        html.append("Plotly.newPlot('plot', [outerBlocks, innerBlocks, wireframe, substract, observer, figureCenter], {")
         .append("margin:{l:0,r:0,b:0,t:30},")
         .append("scene:{")
         .append("    xaxis:{title:'X'},")  // Ось X будет горизонтальной
@@ -112,5 +114,48 @@ public class HtmlPlotExporter {
     
             vertexOffset += 8;
         }
+    }
+
+    private static void addWireframeEdges(StringBuilder html, List<BotLocation> points, String colorHex) {
+        html.append("var wireX = [], wireY = [], wireZ = [];");
+    
+        for (BotLocation point : points) {
+            double x = point.getX();
+            double y = point.getY();
+            double z = point.getZ();
+    
+            double[][] edges = {
+                {x - 0.5, y - 0.5, z - 0.5, x + 0.5, y - 0.5, z - 0.5},
+                {x + 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z - 0.5},
+                {x + 0.5, y + 0.5, z - 0.5, x - 0.5, y + 0.5, z - 0.5},
+                {x - 0.5, y + 0.5, z - 0.5, x - 0.5, y - 0.5, z - 0.5},
+    
+                {x - 0.5, y - 0.5, z + 0.5, x + 0.5, y - 0.5, z + 0.5},
+                {x + 0.5, y - 0.5, z + 0.5, x + 0.5, y + 0.5, z + 0.5},
+                {x + 0.5, y + 0.5, z + 0.5, x - 0.5, y + 0.5, z + 0.5},
+                {x - 0.5, y + 0.5, z + 0.5, x - 0.5, y - 0.5, z + 0.5},
+    
+                {x - 0.5, y - 0.5, z - 0.5, x - 0.5, y - 0.5, z + 0.5},
+                {x + 0.5, y - 0.5, z - 0.5, x + 0.5, y - 0.5, z + 0.5},
+                {x + 0.5, y + 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5},
+                {x - 0.5, y + 0.5, z - 0.5, x - 0.5, y + 0.5, z + 0.5},
+            };
+    
+            for (double[] e : edges) {
+                html.append("wireX.push(").append(e[0]).append("); wireY.push(").append(e[1]).append("); wireZ.push(").append(e[2]).append(");");
+                html.append("wireX.push(").append(e[3]).append("); wireY.push(").append(e[4]).append("); wireZ.push(").append(e[5]).append(");");
+                html.append("wireX.push(null); wireY.push(null); wireZ.push(null);");
+            }
+        }
+    
+        html.append("var wireframe = {")
+            .append("  type: 'scatter3d',")
+            .append("  mode: 'lines',")
+            .append("  x: wireX, y: wireY, z: wireZ,")
+            .append("  line: {color: '").append(colorHex).append("', width: 1},")
+            .append("  name: 'Edges',")
+            .append("  hoverinfo: 'none',")
+            .append("  showlegend: false")
+            .append("};");
     }
 }
