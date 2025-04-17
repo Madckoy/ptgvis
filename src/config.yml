@@ -3,11 +3,10 @@ y: 11
 z: 11
 
 offsetX: 0
-offsetY: -11
+offsetY: -3
 offsetZ: 0
 
-outerRadius: 10
-innerRadius: 10
+outerRadius: 4
+innerRadius: 4
 
 patternName: test_pattern.yml
-breakDirection: DOWN

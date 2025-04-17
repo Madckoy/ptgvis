@@ -27,3 +27,10 @@ target/classes/com/devone/bot/utils/BotLocation.class
 target/classes/com/devone/bot/utils/ConfigLoader.class
 target/classes/com/devone/bot/utils/HtmlPlotExporter.class
 target/classes/com/devone/bot/utils/blocks/BotLocation.class
+target/classes/com/devone/bot/Main.class
+target/classes/com/devone/bot/core/math/MathMaxFunction.class
+target/classes/com/devone/bot/patterns/PatternConfig.class
+target/classes/com/devone/bot/patterns/generator/GeneratorParams.class
+target/classes/com/devone/bot/patterns/generator/PointGenerator.class
+target/classes/com/devone/bot/utils/ConfigLoader.class
+target/classes/com/devone/bot/utils/HtmlPlotExporter.class

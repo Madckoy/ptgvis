@@ -1,8 +1,8 @@
-# pattern.yml
+#cone
 filters:
-  - "math.abs(x - cx) <= 5"
-  - "math.abs(z - cz) <= 5"
-  - "y <= cy"
-
-filters_head:
-  - "y + 1 <= cy"
+  - "x >= cx - r && x <= cx + r"
+  - "y >= cy && y <= cy + r"
+  - "z >= cz - r && z <= cz + r"
+  - "math.max(math.abs(x - cx), math.abs(z - cz)) <= (y - cy)"
+sort:
+  - "y"
