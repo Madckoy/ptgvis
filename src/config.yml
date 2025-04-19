@@ -1,10 +1,10 @@
-x: 11
-y: 11
-z: 11
+x: 0
+y: 0
+z: 0
 
-offsetX: 0
+offsetX: -2
 offsetY: -3
-offsetZ: 0
+offsetZ: -2
 
 outerRadius: 4
 innerRadius: 4
